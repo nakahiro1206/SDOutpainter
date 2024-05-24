@@ -23,13 +23,13 @@ def main():
     input_image[0:margin, margin:] = top_right_image[-margin:, :inpaint_size]
     input_image[margin:, 0:margin] = bottom_left_image[:inpaint_size, -margin:]
 
-    # mask_image[0:margin, 0:margin].fill(0)
-    # mask_image[0:margin, margin:].fill(0)
-    # mask_image[margin:, 0:margin].fill(0)
-    for i, r in enumerate(input_image):
-        for j, p in enumerate(r):
-            if sum(p) != 255*3:
-                mask_image[i][j].fill(0)
+    mask_image[0:margin, 0:margin].fill(0)
+    mask_image[0:margin, margin:].fill(0)
+    mask_image[margin:, 0:margin].fill(0)
+    # for i, r in enumerate(input_image):
+    #     for j, p in enumerate(r):
+    #         if sum(p) != 255*3:
+    #             mask_image[i][j].fill(0)
                 
 
     cv2.imwrite(top_left_path[:-len(extension)-1]+'_input.'+extension,input_image)

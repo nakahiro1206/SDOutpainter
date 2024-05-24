@@ -1,5 +1,16 @@
 # SDInpainter
 stable diffusion inpaint. expand grid-tiled images
+
+install 手順
+buy MacBook with M1,2,3 chip.
+
+conda create --name <NAME>
+- maybe Python 3.12.3 is installed.
+
+pip install diffusers transformers accelerate torch scipy safetensors omegaconf
+
+DONE!
+
 ```
 Package                Version
 ---------------------- ---------
