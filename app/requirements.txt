@@ -1,0 +1,8 @@
+Flask
+Gunicorn
+flask
+flask_cors
+google
+gspread
+requests
+bs4

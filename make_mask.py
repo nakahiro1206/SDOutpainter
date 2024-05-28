@@ -3,8 +3,8 @@ import numpy as np
 import sys
 
 def main():
-    margin = 128
-    inpaint_size = 640 - margin
+    margin = 64
+    inpaint_size = 512+64 - margin
     whole_size = inpaint_size + margin
     argv = sys.argv
     top_left_path = argv[1]
@@ -19,13 +19,25 @@ def main():
     top_right_image = cv2.imread(top_right_path) # 512 * 512 size
     bottom_left_image = cv2.imread(bottom_left_path) # 512 * 512 size
 
+    # trace input
     input_image[0:margin, 0:margin] = top_left_image[-margin:, -margin:]
     input_image[0:margin, margin:] = top_right_image[-margin:, :inpaint_size]
     input_image[margin:, 0:margin] = bottom_left_image[:inpaint_size, -margin:]
 
+    # bottom
+    # input_image[-margin:, margin:] = top_right_image[:margin, :inpaint_size]
+    # input_image[margin:, -margin:] = bottom_left_image[:inpaint_size, :margin]
+
+    # fill mask
     mask_image[0:margin, 0:margin].fill(0)
     mask_image[0:margin, margin:].fill(0)
     mask_image[margin:, 0:margin].fill(0)
+
+    # bottom
+    # mask_image[-margin:, margin:].fill(0)
+    # mask_image[margin:, -margin:].fill(0)
+
+    # for sparce input?
     # for i, r in enumerate(input_image):
     #     for j, p in enumerate(r):
     #         if sum(p) != 255*3:

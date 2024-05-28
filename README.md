@@ -1,15 +1,23 @@
 # SDInpainter
 stable diffusion inpaint. expand grid-tiled images
 
-install 手順
-buy MacBook with M1,2,3 chip.
+## install 手順
 
-conda create --name <NAME>
+### buy MacBook with M1,2,3 chip.
+
+### conda create --name <NAME>
 - maybe Python 3.12.3 is installed.
 
+### install packages
 pip install diffusers transformers accelerate torch scipy safetensors omegaconf
+pip install Flask
 
-DONE!
+### launch locat server
+python3 main.py
+
+curl -X POST http://xxx.xxx.xxx.xxx:yyyy/human-drawing -F image=@something.png > out.png
+
+generated image (ByteIO) will be sent to out.png
 
 ```
 Package                Version
