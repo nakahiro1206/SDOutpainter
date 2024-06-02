@@ -1,4 +1,0 @@
-crop.py
-
-# TODO
-## https://huggingface.co/docs/diffusers/en/optimization/memory

@@ -1,1 +1,0 @@
-# crop 512*512 from generated image.
