@@ -15,7 +15,9 @@ pip install Flask
 ### launch locat server
 python3 main.py
 
-curl -X POST http://xxx.xxx.xxx.xxx:yyyy/human-drawing -F image=@something.png > out.png
+curl -X POST http://127.0.0.1:2000/human-drawing -F left=@img/input.png -F up=@img/up.png -F up_left=@img/up_left.png > img/out.png
+
+Like this, up_right, right, down_left, down_right is also available.
 
 generated image (ByteIO) will be sent to out.png
 

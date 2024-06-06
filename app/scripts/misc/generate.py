@@ -1,5 +1,5 @@
-from static.make_mask import make_mask
-from static.inpaint import main
+from scripts.make_mask import make_mask
+from scripts.outpaint import outpaint
 from io import StringIO, BytesIO
 from PIL import Image
 
@@ -22,18 +22,19 @@ def generate(left_image_file_storage):
     """upper and upper left should be given by POST argument"""
 
     # load upper image
-    upper_image = resize(Image.open("static/pizza_1024_30.png"))
+    upper_image = resize(Image.open("img/upper.png"))
 
     # load upper right image
-    upper_left_image = resize(Image.open("static/pizza.png"))
+    upper_left_image = resize(Image.open("img/upper_left.png"))
 
     # create input and mask
     input_image, mask_image = make_mask(upper_left_image, upper_image, left_image)
 
-    generated_image = main(input_image, mask_image)
+    generated_image = outpaint(input_image, mask_image)
 
     # Image from Pillow
     img_io = BytesIO() # or StryingIO
     generated_image.save(img_io, 'PNG', quality=95)
+    generated_image.save("./out.png", 'PNG')
     img_io.seek(0)
     return img_io

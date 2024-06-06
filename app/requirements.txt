@@ -1,8 +1,11 @@
 Flask
-Gunicorn
-flask
 flask_cors
-google
-gspread
-requests
-bs4
+diffusers
+transformers
+accelerate
+torch
+scipy
+safetensors
+omegaconf
+perlin_noise
+scikit-learn

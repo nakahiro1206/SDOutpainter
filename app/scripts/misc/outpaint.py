@@ -3,19 +3,19 @@ import torch
 from diffusers import StableDiffusionInpaintPipeline, UniPCMultistepScheduler
 from diffusers.utils import load_image
 
-def main(input_image, mask_image):
+def outpaint(input_image, mask_image):
     s = time.time()
 
     print("start loading")
     # download model. 
-    torch.backends.cuda.matmul.allow_tf32 = True
+    # torch.backends.cuda.matmul.allow_tf32 = True
     pipeline = StableDiffusionInpaintPipeline.from_pretrained(
         "runwayml/stable-diffusion-inpainting",
+        # float 32 by default
+        # if necessary change to float16
+        # torch_dtype=torch.float16,
+        # use_safetensors=True,
     )
-    # pipeline = StableDiffusionInpaintPipeline.from_pretrained(
-    #     "Sanster/anything-4.0-inpainting",
-    #     use_safetensors=True,
-    # )
     pipeline.safety_checker = None
     
     # reduce memory usage.
@@ -26,9 +26,9 @@ def main(input_image, mask_image):
     width, height = input_image.size
     print("image load complete: ", time.time()-s)
 
-    print("generation start")
     # generate image and save.
-    prompt = "cute, cartoon, picture" # cartoon, picturebook, fairy tale. 
+    print("generation start")
+    prompt = "no background, white background, line-drawing" # , cute, nature, anime, cartoon, picture" # cartoon, picturebook, fairy tale. 
     negative_prompt = "ugly, realistic"
 
     pipeline.enable_vae_tiling()
@@ -42,7 +42,9 @@ def main(input_image, mask_image):
                             ).images[0]
     print("image generation complete: ", time.time()-s)
 
+    # exclude not-masked area
     return result_image.crop((width-512, height-512, width, height))
 
 if __name__ == '__main__':
-    main()
+    print("diffusers をクラスにしよう！")
+    outpaint()
