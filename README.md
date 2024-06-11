@@ -1,26 +1,26 @@
-# SDInpainter
-stable diffusion inpaint. expand grid-tiled images
+# SDOutpainter
+With stable diffusion inpaint, expand grid-tiled images
 
 ## install 手順
 
-### buy MacBook with M1,2,3 chip.
+### OS: MacBook with M2 chip.
 
 ### conda create --name <NAME>
 - maybe Python 3.12.3 is installed.
 
 ### install packages
-pip install diffusers transformers accelerate torch scipy safetensors omegaconf
-pip install Flask
+pip install -r requirements.txt
 
-### launch locat server
+### Launch local server with Flask
 python3 main.py
 
 curl -X POST http://127.0.0.1:2000/human-drawing -F left=@img/input.png -F up=@img/up.png -F up_left=@img/up_left.png > img/out.png
 
-Like this, up_right, right, down_left, down_right is also available.
+Like this, up_right, right, down_left, down, down_right is also available.
 
 generated image (ByteIO) will be sent to out.png
 
+cf) pip list in conda environment
 ```
 Package                Version
 ---------------------- ---------
