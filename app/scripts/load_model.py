@@ -34,7 +34,7 @@ class Outpainter:
         if len(image_map) != 9:
             exit("image map should have 9 image path")
 
-        input_image, mask_image = make_mask(image_map)
+        input_image, mask_image, left, up, right, down = make_mask(image_map)
         # mask_image = pipeline.mask_processor.blur(mask_image, blur_factor=33)
         print("image masking complete: ")
         
@@ -56,14 +56,13 @@ class Outpainter:
             ).images[0]
 
         print("image generation complete")
-        # exclude not-masked area
-        print("CROP HERE!!!")
-        # cropped_result = result_image.crop((width-512, height-512, width, height))
+        # exclude masked area
+        cropped_result = result_image.crop((left, up, right, down))
 
         # Image from Pillow
         img_io = BytesIO() # or StryingIO
-        result_image.save(img_io, 'PNG')
-        result_image.save("img/out.png", 'PNG')
+        cropped_result.save(img_io, 'PNG')
+        cropped_result.save("img/out.png", 'PNG')
         img_io.seek(0)
         
         print(time.time()-start)

@@ -50,8 +50,10 @@ def make_mask(image_map):
 
     image_is_None = [False] * 9
 
+    # idx for source
     left_up_idx = [inpaint_size-margin, 0, 0]
     right_down_idx = [inpaint_size, inpaint_size, margin]
+    # idx for distination
     Left_Up_idx = [0, margin, inpaint_size + margin]
     Right_Down_idx = [margin, margin+inpaint_size, whole_size]
     for idx, image_data in enumerate(image_map):
@@ -84,14 +86,26 @@ def make_mask(image_map):
     crop_right = whole_size
     crop_up = 0
     crop_down = whole_size
+    # area to be inpainted
+    area_to_inpaint_left = margin
+    area_to_inpaint_right = whole_size - margin
+    area_to_inpaint_up = margin
+    area_to_inpaint_down = whole_size - margin
     if is_all_None(image_is_None, (0, 3, 6)):
         crop_left += margin
+        area_to_inpaint_left -= margin
+        area_to_inpaint_right -= margin
     if is_all_None(image_is_None, (2, 5, 8)):
         crop_right -= margin
     if is_all_None(image_is_None, (0, 1, 2)):
        crop_up += margin
+       area_to_inpaint_up -= margin
+       area_to_inpaint_down -= margin
     if is_all_None(image_is_None, (6, 7, 8)):
         crop_down -= margin
+
+    assert area_to_inpaint_down - area_to_inpaint_up == inpaint_size
+    assert area_to_inpaint_right - area_to_inpaint_left == inpaint_size
     
     input_image = input_image.crop((crop_left, crop_up, crop_right, crop_down))
     mask_image = mask_image.crop((crop_left, crop_up, crop_right, crop_down))
@@ -111,4 +125,4 @@ def make_mask(image_map):
     input_image_noised.save("img/input_noised.png", 'PNG')
     mask_image_noised.save("img/mask_noised.png", 'PNG')
 
-    return input_image_noised, mask_image_noised
+    return input_image_noised, mask_image_noised, area_to_inpaint_left, area_to_inpaint_up, area_to_inpaint_right, area_to_inpaint_down

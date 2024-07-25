@@ -15,7 +15,8 @@ print("download complete: ", time.time()-s)
 
 print("generation start")
 # generate image and save.
-result = pipe(prompt = "girl playing with cute tiny pig", width  = img_size, height = img_size, num_inference_steps = inference)
+prompt = "pizza"
+result = pipe(prompt = prompt, width  = img_size, height = img_size, num_inference_steps = inference)
 result.images[0].save("./Img/pizza_"+str(img_size)+"_"+str(inference)+".png")
 print("generation and save complete", time.time()-s)
 
