@@ -2,10 +2,10 @@
 With stable diffusion inpaint, expand grid-tiled images
 
 ### input
-![input image](/assets/Screenshot 2024-07-28 at 4.22.44.png)
+![/assets/Screenshot 2024-07-28 at 4.22.44.png](https://raw.githubusercontent.com/nakahiro1206/SDOutpainter/main/assets/Screenshot%202024-07-28%20at%204.23.16.png)
 
 ### result: outpaint in neighboring tiles
-![result image](assets/Screenshot 2024-07-28 at 4.22.44.png)
+![result image](https://raw.githubusercontent.com/nakahiro1206/SDOutpainter/main/assets/Screenshot%202024-07-28%20at%204.22.44.png)
 
 ## install 手順
 
