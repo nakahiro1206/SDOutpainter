@@ -4,7 +4,6 @@ import random
 import sys
 
 args = sys.argv
-# assert len(args) == 2
 
 img_size = 512
 inference = 20
@@ -26,7 +25,8 @@ for _ in range(40):
     idx = random.randint(0, length - 1)
     prompt += f"{words[idx]};"
 
-prompt = args[1]
+if len(args) == 2:
+    prompt = args[1]
 
 """
 # 2. Forward embeddings and negative embeddings through text encoder

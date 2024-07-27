@@ -1,8 +1,15 @@
+import random
 def prompt_generate():
-    return ""
-    return """In a quaint Parisian bookstore named "Enchanted Pages," Madame Celeste, the wise and kind keeper, guided a young woman named Elara to a magical midnight-blue book. As Elara read, she was transported to realms of dragons and fairies. When she left at dawn, her heart was forever filled with wonder and magic."""
-
-# "cute, cool, fancy" #"no background, white background, cute, nature"# , line-drawing" # cartoon, picture" # cartoon, picturebook, fairy tale. 
+    word_file = '../misc/nouns.txt' 
+    words = open(word_file).read().splitlines()
+    length = len(words)
+    prompt = ""
+    for _ in range(30):
+        idx = random.randint(0, length - 1)
+        prompt += f"{words[idx]};"
+    print(prompt)
+    print("!!NEED TO EXCLUDE INAPPRORIATE WORDS!!")
+    return prompt
 
 def negative_prompt_generate():
-    return "ugly, realistic"
+    return "ugly"

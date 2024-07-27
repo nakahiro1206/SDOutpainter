@@ -2,13 +2,14 @@ import time
 import torch
 from diffusers import StableDiffusionInpaintPipeline, UniPCMultistepScheduler
 from io import BytesIO
-from scripts.make_mask import make_mask
+from scripts.make_mask import make_mask, make_mask_for_boundary
 from scripts.prompt import prompt_generate, negative_prompt_generate
 
 class Outpainter:
     def __init__(self) -> None:
         """download model. """
         torch.backends.cuda.matmul.allow_tf32 = True # what does it mean
+
         pipeline = StableDiffusionInpaintPipeline.from_pretrained(
             "runwayml/stable-diffusion-inpainting",
             # float 32 by default
@@ -18,15 +19,20 @@ class Outpainter:
         )
         pipeline.safety_checker = None
         print("start loading")
+
         # reduce memory usage.
         pipeline.scheduler = UniPCMultistepScheduler.from_config(pipeline.scheduler.config)
         pipeline.enable_vae_tiling()
+
+        if torch.cuda.is_available():
+            pipeline = pipeline.to("cuda")
+        
         self.pipeline = pipeline
 
 
     def call(self, image_map = None) -> BytesIO:
         """
-        image_map: FileStorage[]
+        image_map: FileStorage[] or String[]
         """
         start = time.time()
         if image_map is None:
@@ -35,7 +41,6 @@ class Outpainter:
             exit("image map should have 9 image path")
 
         input_image, mask_image, left, up, right, down = make_mask(image_map)
-        # mask_image = pipeline.mask_processor.blur(mask_image, blur_factor=33)
         print("image masking complete: ")
         
         # generate image and save.
@@ -56,6 +61,19 @@ class Outpainter:
             ).images[0]
 
         print("image generation complete")
+
+        # # make another mask for seamless connection of the images
+        # input_image_without_boundary, mask_image_boundary_only = make_mask_for_boundary(result_image, mask_image, left, up, right, down)
+        # result_image = self.pipeline(
+        #      prompt="", 
+        #      negative_prompt="", 
+        #      image=input_image_without_boundary, 
+        #      mask_image=mask_image_boundary_only, 
+        #      height=height, 
+        #      width=width, 
+        #      num_inference_steps = 20
+        #     ).images[0]
+
         # exclude masked area
         cropped_result = result_image.crop((left, up, right, down))
 
@@ -67,6 +85,3 @@ class Outpainter:
         
         print(time.time()-start)
         return img_io
-    
-if __name__ == '__main__':
-    pass

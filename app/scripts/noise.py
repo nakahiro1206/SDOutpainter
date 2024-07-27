@@ -47,7 +47,7 @@ def gradient(h, x, y):
     return g[:, :, 0] * x + g[:, :, 1] * y
 ##########
 
-def perlin_noise(img, mask):
+def perlin_noise(img, mask, override_enabled=False):
     lin_x = np.linspace(0, 5, mask.shape[1], endpoint=False)
     lin_y = np.linspace(0, 5, mask.shape[0], endpoint=False)
     x, y = np.meshgrid(lin_x, lin_y)
@@ -58,26 +58,31 @@ def perlin_noise(img, mask):
     print("noise-stack", noise.shape)
     print("mask", mask.shape)
     
-    # expand mask to the empty area in input image
-    nmask = mask.copy()
-    nmask[mask > 0] = 1
-    # はみ出し.
-    # 白い点（RGB全てが255）のマスクを作成
-    white_points = np.all(img == [255, 255, 255], axis=-1)
+    if override_enabled:
+        # expand mask to the empty area in input image
+        mask_for_noise = mask.copy()
+        mask_for_noise[mask > 0] = 1
+        # はみ出し.
+        # 白い点（RGB全てが255）のマスクを作成
+        white_points = np.all(img == [255, 255, 255], axis=-1)
+        mask_for_noise[white_points] = [1, 1, 1]
+        # if you wanna override the white area in input image.
+        mask[white_points] = [255, 255, 255] # trim mask
 
-    # mask のその場所を [0, 0, 0] にする
-    nmask[white_points] = [1, 1, 1]
-    # mask も減らす？.
-    mask[white_points] = [255, 255, 255]
+        # if you wanna add noise at the white area of the input images
+        img = (1 - mask_for_noise) * img + mask_for_noise * noise
 
-    img = (1 - nmask) * img + nmask * noise
+    else:
+        # if you dont wanna add noise at the white area of the input images
+        img = (1 - mask) * img + mask * noise
+
     return img.astype(np.uint8), mask.astype(np.uint8)
 
 def gaussian_noise(img, mask):
     noise = np.random.randn(mask.shape[0], mask.shape[1], 3)
     noise = (noise + 1) / 2 * 255
     noise = noise.astype(np.uint8)
-    nmask = mask.copy()
-    nmask[mask > 0] = 1
-    img = (1 - nmask) * img + nmask * noise
+    mask_for_noise = mask.copy()
+    mask_for_noise[mask > 0] = 1
+    img = (1 - mask_for_noise) * img + mask_for_noise * noise
     return img.astype(np.uint8), mask.astype(np.uint8)

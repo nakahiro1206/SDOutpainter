@@ -1,41 +1,11 @@
-from flask import Flask,request, jsonify, send_file
-from flask_cors import CORS, cross_origin
-# from google.oauth2.service_account import Credentials
-# import gspread
-from scripts.load_model import Outpainter
+from flask import Flask,request, send_file
+from flask_cors import CORS
+from scripts.Outpainter import Outpainter
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
-# cors = CORS(app, resources={r"/*": {"origins": "*"}})
 cors = CORS(app)
 
 outpainter = Outpainter()
-
-"""
-app.secret_key = "secret"
-
-def open_gs():
-    # Google Sheet setting.
-    scopes = [
-        'https://www.googleapis.com/auth/spreadsheets',
-        'https://www.googleapis.com/auth/drive'
-    ]
-    credentials = Credentials.from_service_account_file(
-        "./static/awesome-advice-328201-fd45bb3e869e.json",
-        scopes=scopes
-    )
-    gc = gspread.authorize(credentials)
-    spreadsheet_url = "https://docs.google.com/spreadsheets/d/17gEfTOPkqb916jOX2YwETBWtvgX_0XU7MtV3xuZutP0/edit?usp=sharing"
-    spreadsheet = gc.open_by_url(spreadsheet_url)
-    return spreadsheet
-
-# CORS permission
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
-"""
 
 @app.route('/human-drawing',methods=['POST'])
 def human_drawing():
