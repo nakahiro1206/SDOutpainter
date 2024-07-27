@@ -1,8 +1,12 @@
 # pip install diffusers transformers accelerate torch scipy safetensors omegaconf
 import time
 import random
+import sys
 
-img_size = 1024
+args = sys.argv
+# assert len(args) == 2
+
+img_size = 512
 inference = 20
 s = time.time()
 
@@ -13,7 +17,7 @@ pipe = diffusers.StableDiffusionPipeline.from_pretrained("admruul/anything-v3.0"
 pipe.safety_checker = None
 print("download complete: ", time.time()-s)
 
-word_file = 'wordlist.10000.txt'
+word_file = 'nouns.txt'
 words = open(word_file).read().splitlines()
 length = len(words)
 prompt = ""
@@ -22,7 +26,7 @@ for _ in range(40):
     idx = random.randint(0, length - 1)
     prompt += f"{words[idx]};"
 
-prompt = "shark;girl" + "wakame;" * 38
+prompt = args[1]
 
 """
 # 2. Forward embeddings and negative embeddings through text encoder
