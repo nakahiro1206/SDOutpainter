@@ -1,6 +1,12 @@
 # SDOutpainter
 With stable diffusion inpaint, expand grid-tiled images
 
+### input
+![input image](/assets/Screenshot 2024-07-28 at 4.22.44.png)
+
+### result: outpaint in neighboring tiles
+![result image](assets/Screenshot 2024-07-28 at 4.22.44.png)
+
 ## install 手順
 
 ### OS: MacBook with M2 chip.
