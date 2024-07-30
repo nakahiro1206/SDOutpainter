@@ -10,7 +10,7 @@ It creates seamlessly connected image with the limited information.
 ### demo
 Input source is 1/8 areas of left image(girl eating pizza) and right image(nurses in hospital) and prompt: *"A surreal dreamscape with floating islands, cascading waterfalls into the void, and fantastical creatures soaring through a colorful, ethereal sky."*
 
-![demo]()
+![demo](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/Screenshot%202024-07-31%20at%200.59.20.png)
 
 ### Challenges I tackled
 
@@ -39,13 +39,14 @@ D_{up} = \frac{1}{h}
 $$
 Note that unavailable input sources because they are not passed as arguments should be dismissed.
 
-Here is 3D plot of proportion of left image when left and right are avilable. Check out that P ~= 1 when x = 0 (it means w = 0, left side), and P ~= 0 when y = 0 (it means h = 0, right side), and average P ~= 0.5(merged in balance)
+Here is 3D plot of proportion of left image when left and right are available. Check out that P ~= 1 when x = 0 (it means w = 0, left side), and P ~= 0 when y = 0 (it means h = 0, right side), and average P ~= 0.5(merged in balance)
 
-![3d_plot]()
+![3d_plot](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/Screenshot%202024-07-31%20at%201.59.35.png)
 
-Here is the result. This image have texture of all the input images and the continuity on the edges. Pre-painting will be very helpful for AI's inpainting.
-
-![pre-painted]()
+Here are the images to which it applied the proportion filter and the merged result. This image have texture of all the input images and the continuity on the edges. Pre-painting will be very helpful for AI's inpainting.
+![left](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/left.png)
+![right](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/right.png)
+![pre-painted](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/input.png)
 
 #### Prompt engineering(I'm still working on.)
 SDOutpainter uses "runwayml/stable-diffusion-inpainting", which requires prompt engineering to perform better.
