@@ -1,72 +1,94 @@
 # SDOutpainter
-With stable diffusion inpaint, expand grid-tiled images
+Outpaint with stable diffusion inpainting model.
+This repository is image generation part of a collaborative drawing application with AI agent.
+See [front end](https://github.com/hrm1810884/works-hai-frontend) and [back end](https://github.com/hrm1810884/works-hai-backend) from here.
 
-### input
-![/assets/Screenshot 2024-07-28 at 4.22.44.png](https://raw.githubusercontent.com/nakahiro1206/SDOutpainter/main/assets/Screenshot%202024-07-28%20at%204.23.16.png)
+## Notable functions
+SDOutpainter does require prompt and the rims of images that should be the neighbors.
+It creates seamlessly connected image with the limited information.
 
-### result: outpaint in neighboring tiles
-![result image](https://raw.githubusercontent.com/nakahiro1206/SDOutpainter/main/assets/Screenshot%202024-07-28%20at%204.22.44.png)
+### demo
+Input source is 1/8 areas of left image(girl eating pizza) and right image(nurses in hospital) and prompt: *"A surreal dreamscape with floating islands, cascading waterfalls into the void, and fantastical creatures soaring through a colorful, ethereal sky."*
 
-## install 手順
+![demo]()
 
-### OS: MacBook with M2 chip.
+### Challenges I tackled
 
-### conda create --name <NAME>
-- maybe Python 3.12.3 is installed.
+#### How to enable seamless inpainting?
+Different from usual inpainting, SDOutpainter draws much larger pictures than input image sources.
+You cannot expect good performance if you simply create input and mask and execute stable diffusion pipeline.
 
-### install packages
-pip install -r requirements.txt
+To enable seamless inpainting, it pre-paint the area to be inpainted.
+Workflow is like this.
 
-### Launch local server with Flask
+* Reiterate the periphrals of neighboring images
+Inpainting on empty space does not perform well. So I need to convey the texture of input images. To keep continuity, the arangement of copied images is {original, flipped, original,,,} vertically or horizontally.
+
+* Merge neighbors
+In case neighboring images have different texture, I need to carefully merge the reiterated images to retain each texture even after merged.
+
+I adopted a function to calculate blend proportion.
+$$
+P_{i}(h, w) = \frac{D_i}{\sum_{available\ j} D_j}
+\\
+D_{left} = \frac{1}{w} 
+, D_{right} = \frac{1}{W-w}
+\\
+D_{up} = \frac{1}{h}
+, D_{down} = \frac{1}{H-h}
+$$
+Note that unavailable input sources because they are not passed as arguments should be dismissed.
+
+Here is 3D plot of proportion of left image when left and right are avilable. Check out that P ~= 1 when x = 0 (it means w = 0, left side), and P ~= 0 when y = 0 (it means h = 0, right side), and average P ~= 0.5(merged in balance)
+
+![3d_plot]()
+
+Here is the result. This image have texture of all the input images and the continuity on the edges. Pre-painting will be very helpful for AI's inpainting.
+
+![pre-painted]()
+
+#### Prompt engineering(I'm still working on.)
+SDOutpainter uses "runwayml/stable-diffusion-inpainting", which requires prompt engineering to perform better.
+Temporary implementation is to manually type the ChatGPT-generated prompt or create random word arrangement. The latter method did not perform well.
+I'm going to adopt [prompt enhancement with LLM](https://huggingface.co/docs/diffusers/en/using-diffusers/weighted_prompts)
+
+## Tutorial
+
+### Environment
+OS: M2 chip MacBookAir.\
+conda: Python 3.10.10
+```
+conda create --name <ENV_NAME>
+conda activate <ENV_NAME>
+```
+
+### Install required packages
+```
+pip install diffusers transformers accelerate torch scipy safetensors omegaconf flask flask_cors Pillow
+```
+
+### Launch local server
+```
+cd SDOutpainter/app
 python3 main.py
-
-curl -X POST http://127.0.0.1:2000/human-drawing -F left=@img/input.png -F up=@img/up.png -F up_left=@img/up_left.png
-
-Like this, up_right, right, down_left, down, down_right is also available.
-
-generated image (ByteIO) will be sent to out.png
-
-cf) pip list in conda environment
 ```
-Package                Version
----------------------- ---------
-accelerate             0.30.1
-antlr4-python3-runtime 4.9.3
-Brotli                 1.0.9
-certifi                2024.2.2
-charset-normalizer     2.0.4
-diffusers              0.27.2
-filelock               3.13.1
-fsspec                 2024.5.0
-huggingface-hub        0.23.0
-idna                   3.7
-importlib_metadata     7.1.0
-Jinja2                 3.1.3
-MarkupSafe             2.1.3
-mpmath                 1.3.0
-networkx               3.1
-numpy                  1.26.4
-omegaconf              2.3.0
-opencv-python          4.9.0.80
-packaging              24.0
-pillow                 10.3.0
-pip                    24.0
-psutil                 5.9.8
-PySocks                1.7.1
-PyYAML                 6.0.1
-regex                  2024.5.15
-requests               2.31.0
-safetensors            0.4.3
-scipy                  1.13.0
-setuptools             69.5.1
-sympy                  1.12
-tokenizers             0.19.1
-torch                  2.3.0
-torchvision            0.18.0
-tqdm                   4.66.4
-transformers           4.40.2
-typing_extensions      4.11.0
-urllib3                2.2.1
-wheel                  0.43.0
-zipp                   3.18.1
+
+### Send a request
+Open a new terminal window.
+Move to input image folder and send a post request like this.
 ```
+curl -X POST http://127.0.0.1:2000/human-drawing -F left=@path_to_image -F up=@ipath_to_image -F --output out.png
+```
+Available arguments to describe image positions are:
+* up
+* left
+* right
+* down
+* up_left
+* up_right
+* down_left
+* down_right
+
+If you don't give any argument, Perlin noise is applied to the area to be inpainted instead.
+
+Generated image (ByteIO) will be sent to out.png

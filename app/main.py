@@ -41,4 +41,5 @@ def human_drawing():
 
 if __name__ == "__main__":
     # print (app.url_map)
+    # curl -X POST http://127.0.0.1:2000/human-drawing -F left=@Left.png -F up=@Top.png
     app.run(debug=True, use_reloader=False, host='0.0.0.0', port=2000)

@@ -61,6 +61,7 @@ class Outpainter:
             ).images[0]
 
         print("image generation complete")
+        result_image.save("img/uncropped.png")
 
         # # make another mask for seamless connection of the images
         # input_image_without_boundary, mask_image_boundary_only = make_mask_for_boundary(result_image, mask_image, left, up, right, down)

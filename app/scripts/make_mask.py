@@ -2,6 +2,8 @@ from PIL import Image, ImageOps, ImageFilter
 from scripts.noise import perlin_noise # , gaussian_noise
 # from scripts.noise_with_module import perlin_noise2
 import numpy as np
+from scripts.prepaint import merge_neighbors, reiterate_neighbor
+from scripts.const import get_const
 
 def resize(image: Image):
     ok = True
@@ -19,12 +21,6 @@ def is_all_None(image_is_None, tpl):
         if not image_is_None[i]:
             return False
     return True
-
-def get_const():
-    margin = 64
-    inpaint_size = 512
-    whole_size = inpaint_size + margin*2
-    return margin, inpaint_size, whole_size
 
 def find_nearest(repeated_neighbors, h, w, inpaint_size):
     d = [["left", w], ["up",h], ["down",inpaint_size-h], ["right",inpaint_size-w]]
@@ -51,8 +47,9 @@ def make_mask(image_map):
     mask_image = Image.new('RGB', (whole_size, whole_size), color=(255, 255, 255))
 
     image_is_None = [False] * 9
-    neighbors = [None] * 9
+    reiterated_neighbors = [None] * 9
 
+    # Copy peripheral of neighboring image to input image
     # idx for source
     left_up_idx = [inpaint_size-margin, 0, 0]
     right_down_idx = [inpaint_size, inpaint_size, margin]
@@ -77,69 +74,33 @@ def make_mask(image_map):
 
         # image.paste(image.crop((left, up, right, down)), (Left, Up))
         cropped_source = image.crop((left, up, right, down))
-        neighbors[idx] = cropped_source
         input_image.paste(cropped_source, (Left, Up))
+
+        if idx%2 != 0: # idx = 1, 3, 5, 7 (up, left, right, down)
+            reiterated_neighbors[idx] = reiterate_neighbor(idx, cropped_source)
 
         Right = Right_Down_idx[w_pos]
         Down = Right_Down_idx[h_pos]
 
         # fill with black
         mask_image.paste((0, 0, 0), (Left, Up, Right, Down))
-
-    repeated_neighbors = {}
-    for idx, neighbor in enumerate(neighbors):
-        if idx%2 == 0 or neighbor is None: continue
-        new_Image = Image.new('RGB', (inpaint_size, inpaint_size))
-        key = ""
-        if idx == 1: # up
-            key = "up"
-            for i in range(inpaint_size//margin):
-                if i%2 == 0:
-                    new_Image.paste(ImageOps.flip(neighbor),(0, i*margin))
-                else:
-                    new_Image.paste(neighbor,(0, i*margin))
-        
-        if idx == 3: # left
-            key = "left"
-            for i in range(inpaint_size//margin):
-                if i%2 == 0:
-                    new_Image.paste(ImageOps.mirror(neighbor),(i*margin, 0))
-                else:
-                    new_Image.paste(neighbor,(i*margin, 0))
-
-        if idx == 5: # right
-            key = "right"
-            for i in range(inpaint_size//margin):
-                if i%2 == 1:
-                    new_Image.paste(ImageOps.mirror(neighbor),(i*margin, 0))
-                else:
-                    new_Image.paste(neighbor,(i*margin, 0))
-        
-        if idx == 7: # down
-            key = "down"
-            for i in range(inpaint_size//margin):
-                if i%2 == 1:
-                    new_Image.paste(ImageOps.flip(neighbor),(0, i*margin))
-                else:
-                    new_Image.paste(neighbor, (0, i*margin))
-        else: pass
-        repeated_neighbors[key] = np.array(new_Image)
     
     if not is_all_None(image_is_None, (1, 3, 5, 7)):
-        merged_np = np.zeros((inpaint_size, inpaint_size, 3))
-        keys = list(repeated_neighbors.keys())
-        keys_length = len(keys)
-        for h in range(inpaint_size):
-            for w in range(inpaint_size):
-                # mix
-                i = (h * inpaint_size + w) % keys_length
-                merged_np[h][w] = repeated_neighbors[keys[i]][h][w]
+        input_image = merge_neighbors(reiterated_neighbors, input_image)
 
-                # split
-                # merged_np[h][w] = find_nearest(repeated_neighbors, h, w, inpaint_size)
-        merged_image = Image.fromarray(np.uint8(merged_np))
-        blurred = merged_image.filter(ImageFilter.GaussianBlur(5))
-        input_image.paste(blurred, (margin, margin))
+    else: # add perlin noise
+        input_np = np.array(input_image)
+        mask_np = np.array(mask_image)
+
+        # add noise on inout and mask
+        input_np_noised, mask_np_noised = perlin_noise(input_np, mask_np)
+        # input_np_noised, mask_np_noised = perlin_noise2(input_np, mask_np)
+        # input_np_noised, mask_np_noised = gaussian_noise(input_np, mask_np)
+
+        input_image_noised = Image.fromarray(input_np_noised)
+        # mask_image_noised  = Image.fromarray(mask_np_noised)
+
+        input_image = input_image_noised
 
     # crop None area
     crop_left = 0
@@ -169,17 +130,6 @@ def make_mask(image_map):
     
     input_image = input_image.crop((crop_left, crop_up, crop_right, crop_down))
     mask_image = mask_image.crop((crop_left, crop_up, crop_right, crop_down))
-
-    # input_np = np.array(input_image)
-    # mask_np = np.array(mask_image)
-
-    # # add noise on inout and mask
-    # input_np_noised, mask_np_noised = perlin_noise(input_np, mask_np)
-    # # input_np_noised, mask_np_noised = perlin_noise2(input_np, mask_np)
-    # # input_np_noised, mask_np_noised = gaussian_noise(input_np, mask_np)
-
-    # input_image_noised = Image.fromarray(input_np_noised)
-    # mask_image_noised  = Image.fromarray(mask_np_noised)
 
     # save images
     input_image.save("img/input.png", 'PNG')

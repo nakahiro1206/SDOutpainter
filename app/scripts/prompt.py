@@ -1,5 +1,6 @@
 import random
 def prompt_generate():
+    return "A surreal dreamscape with floating islands, cascading waterfalls into the void, and fantastical creatures soaring through a colorful, ethereal sky."
     word_file = '../misc/nouns.txt' 
     words = open(word_file).read().splitlines()
     length = len(words)
