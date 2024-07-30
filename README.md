@@ -21,10 +21,10 @@ You cannot expect good performance if you simply create input and mask and execu
 To enable seamless inpainting, it pre-paint the area to be inpainted.
 Workflow is like this.
 
-* Reiterate the periphrals of neighboring images
+* Reiterate the periphrals of neighboring images\
 Inpainting on empty space does not perform well. So I need to convey the texture of input images. To keep continuity, the arangement of copied images is {original, flipped, original,,,} vertically or horizontally.
 
-* Merge neighbors
+* Merge neighbors\
 In case neighboring images have different texture, I need to carefully merge the reiterated images to retain each texture even after merged.
 
 I adopted a function to calculate blend proportion.
@@ -47,9 +47,13 @@ Here is 3D plot of proportion of left image when left and right are available. C
 
 ![3d_plot](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/Screenshot%202024-07-31%20at%201.59.35.png)
 
-Here are the images to which it applied the proportion filter and the merged result. This image have texture of all the input images and the continuity on the edges. Pre-painting will be very helpful for AI's inpainting.
+Here are the reiterated images to which the proportion filter is applied. Above is the left image and below is the right image used in demo section.
+
 ![left](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/left.png)
 ![right](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/right.png)
+
+And here is the merged result. This image have texture of all the input images and the continuity on the edges. Pre-painting will be very helpful for AI's inpainting.
+
 ![pre-painted](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/input.png)
 
 #### Prompt engineering(I'm still working on.)
