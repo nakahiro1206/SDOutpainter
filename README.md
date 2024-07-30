@@ -7,7 +7,7 @@ See [front end](https://github.com/hrm1810884/works-hai-frontend) and [back end]
 SDOutpainter does require prompt and the rims of images that should be the neighbors.
 It creates seamlessly connected image with the limited information.
 
-### demo
+### Demonstration
 Input source is 1/8 areas of left image(girl eating pizza) and right image(nurses in hospital) and prompt: *"A surreal dreamscape with floating islands, cascading waterfalls into the void, and fantastical creatures soaring through a colorful, ethereal sky."*
 
 ![demo](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/Screenshot%202024-07-31%20at%200.59.20.png)
@@ -32,7 +32,7 @@ I adopted a function to calculate blend proportion.
 \displaylines{
 P_{i}(h, w) = \frac{D_i}{\sum_{available\ j} D_j}\\
 \begin{cases}
-D_{left} = \frac{1}{w}\\
+\ D_{left} = \frac{1}{w}\\
 D_{right} = \frac{1}{W-w}\\
 D_{up} = \frac{1}{h}\\
 D_{down} = \frac{1}{H-h}
