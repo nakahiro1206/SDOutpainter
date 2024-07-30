@@ -28,15 +28,19 @@ Inpainting on empty space does not perform well. So I need to convey the texture
 In case neighboring images have different texture, I need to carefully merge the reiterated images to retain each texture even after merged.
 
 I adopted a function to calculate blend proportion.
-$$
-P_{i}(h, w) = \frac{D_i}{\sum_{available\ j} D_j}
-\\
-D_{left} = \frac{1}{w} 
-, D_{right} = \frac{1}{W-w}
-\\
-D_{up} = \frac{1}{h}
-, D_{down} = \frac{1}{H-h}
-$$
+```math
+\displaylines{
+P_{i}(h, w) = \frac{D_i}{\sum_{available\ j} D_j}\\
+\begin{cases}
+D_{left} = \frac{1}{w}\\
+D_{right} = \frac{1}{W-w}\\
+D_{up} = \frac{1}{h}\\
+D_{down} = \frac{1}{H-h}
+\end{cases}
+}
+
+```
+
 Note that unavailable input sources because they are not passed as arguments should be dismissed.
 
 Here is 3D plot of proportion of left image when left and right are available. Check out that P ~= 1 when x = 0 (it means w = 0, left side), and P ~= 0 when y = 0 (it means h = 0, right side), and average P ~= 0.5(merged in balance)
