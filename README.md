@@ -4,7 +4,7 @@ This repository is image generation part of a collaborative drawing application 
 See [front end](https://github.com/hrm1810884/works-hai-frontend) and [back end](https://github.com/hrm1810884/works-hai-backend) from here.
 
 ## Notable functions
-SDOutpainter does require prompt and the rims of images that should be the neighbors.
+SDOutpainter does require prompt and the rims of images that should be the neighbors only.
 It creates seamlessly connected image with the limited information.
 
 ### Demonstration
@@ -41,9 +41,9 @@ D_{down} = \frac{1}{H-h}
 
 ```
 
-Note that unavailable input sources because they are not passed as arguments should be dismissed.
+Note that unavailable input sources which are not passed as arguments should be dismissed.
 
-Here is 3D plot of proportion of left image when left and right are available. Check out that P ~= 1 when x = 0 (it means w = 0, left side), and P ~= 0 when y = 0 (it means h = 0, right side), and average P ~= 0.5(merged in balance)
+Here is 3D plot of proportion of left image when left and up has available input. Check out that P ~= 1 when x = 0 (it means w = 0, left side), and P ~= 0 when y = 0 (it means h = 0, up side), and average P ~= 0.5(it means images are merged in balance)
 
 ![3d_plot](https://github.com/nakahiro1206/SDOutpainter/blob/main/assets/Screenshot%202024-07-31%20at%201.59.35.png)
 
