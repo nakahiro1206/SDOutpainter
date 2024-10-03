@@ -86,7 +86,8 @@ python3 main.py
 Open a new terminal window.
 Move to input image folder and send a post request like this.
 ```
-curl -X POST http://127.0.0.1:2000/human-drawing -F left=@path_to_image -F up=@ipath_to_image -F --output out.png
+curl -X POST http://127.0.0.1:2000/human-drawing -F left=@path_to_image -F up=@path_to_image --output out.png
+curl -X POST http://127.0.0.1:2000/human-drawing -F left=@Img/Left.png -F up=@Img/Top.png --output out.png
 ```
 Available arguments to describe image positions are:
 * up

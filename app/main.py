@@ -2,7 +2,7 @@ from flask import Flask,request, send_file
 from flask_cors import CORS
 from scripts.Outpainter import Outpainter
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__)
 cors = CORS(app)
 
 outpainter = Outpainter()
@@ -20,10 +20,6 @@ def human_drawing():
     right = files['right'] if 'right' in files else None
     up = files['up'] if 'up' in files else None
     down = files['down'] if 'down' in files else None
-    up_left = files['up_left'] if 'up_left' in files else None
-    up_right = files['up_right'] if 'up_right' in files else None
-    down_left = files['down_left'] if 'down_left' in files else None
-    down_right = files['down_right'] if 'down_right' in files else None
 
     """
     0: up_left   | 1: up   | 2: up_right  
@@ -32,9 +28,9 @@ def human_drawing():
     -------------+---------+--------------
     6: down_left | 7: down | 8: down_right 
     """
-    image_map = [up_left, up, up_right, 
+    image_map = [None, up, None, 
                  left, None, right, 
-                 down_left, down, down_right]
+                 None, down, None]
 
     result_image_io = outpainter.call(image_map) # ByteIO or StringIO
     return send_file(result_image_io, mimetype='image/png'), 200

@@ -6,7 +6,7 @@ import sys
 args = sys.argv
 
 img_size = 512
-inference = 20
+inference = 25
 s = time.time()
 
 print("start loading")
