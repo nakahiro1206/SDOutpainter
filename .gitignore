@@ -1,1 +1,5 @@
 .DS_Store
+
+# pytorch-AdaIN
+pytorch-AdaIN/
+pytorch-AdaIN/*
