@@ -18,8 +18,8 @@ def human_drawing():
     """type of image is FileStorage"""
     left = files['left'] if 'left' in files else None
     right = files['right'] if 'right' in files else None
-    up = files['up'] if 'up' in files else None
-    down = files['down'] if 'down' in files else None
+    up = files['top'] if 'top' in files else None
+    down = files['bottom'] if 'bottom' in files else None
 
     """
     0: up_left   | 1: up   | 2: up_right  

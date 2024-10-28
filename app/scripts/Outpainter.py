@@ -49,15 +49,16 @@ class Outpainter:
         prompt, negative_prompt = "dragon", "ugly, deformed"  #generate_pos_neg_prompt()
         width, height = input_image.size
 
-        result_image = self.pipeline(
-             prompt=prompt, 
-             negative_prompt=negative_prompt, 
-             image=input_image, 
-             mask_image=mask_image, 
-             height=height, 
-             width=width, 
-             num_inference_steps = 20
-            ).images[0]
+        result_image = input_image
+        # result_image = self.pipeline(
+        #      prompt=prompt, 
+        #      negative_prompt=negative_prompt, 
+        #      image=input_image, 
+        #      mask_image=mask_image, 
+        #      height=height, 
+        #      width=width, 
+        #      num_inference_steps = 20
+        #     ).images[0]
 
         print("image generation complete")
         result_image.save("img/uncropped.png")
