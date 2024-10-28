@@ -3,7 +3,7 @@ import torch
 from diffusers import StableDiffusionInpaintPipeline, UniPCMultistepScheduler
 from io import BytesIO
 from scripts.make_mask import make_mask, make_mask_for_boundary
-from scripts.prompt_template import generate_pos_neg_prompt
+from scripts.generate_prompt_from_format import generate_pos_neg_prompt
 
 class Outpainter:
     def __init__(self) -> None:
@@ -46,7 +46,7 @@ class Outpainter:
         # generate image and save.
         print("generation start")
 
-        prompt, negative_prompt = generate_pos_neg_prompt()
+        prompt, negative_prompt = "dragon", "ugly, deformed"  #generate_pos_neg_prompt()
         width, height = input_image.size
 
         result_image = self.pipeline(
