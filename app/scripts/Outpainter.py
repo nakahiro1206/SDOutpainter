@@ -3,20 +3,21 @@ import torch
 from diffusers import StableDiffusionInpaintPipeline, UniPCMultistepScheduler
 from io import BytesIO
 from scripts.make_mask import make_mask, make_mask_for_boundary
-from scripts.prompt_template import generate_pos_neg_prompt
+from scripts.select_words4prompt import gen_prompt
 
 class Outpainter:
     def __init__(self) -> None:
         """download model. """
         torch.backends.cuda.matmul.allow_tf32 = True # what does it mean
 
-        pipeline = StableDiffusionInpaintPipeline.from_pretrained(
-            "runwayml/stable-diffusion-inpainting",
-            # float 32 by default
-            # if necessary change to float16
-            # torch_dtype=torch.float16,
-            # use_safetensors=True,
-        )
+        pipeline = StableDiffusionInpaintPipeline.from_pretrained("stabilityai/stable-diffusion-2-inpainting")
+        # pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+        #     "runwayml/stable-diffusion-inpainting",
+        #     # float 32 by default
+        #     # if necessary change to float16
+        #     # torch_dtype=torch.float16,
+        #     # use_safetensors=True,
+        # )
         pipeline.safety_checker = None
         print("start loading")
 
@@ -46,19 +47,21 @@ class Outpainter:
         # generate image and save.
         print("generation start")
 
-        prompt, negative_prompt = "a cute cat staring at the moon, drawing styled", "ugly; cartoon" # generate_pos_neg_prompt()
+        prompt = gen_prompt()
+        print("prompt: " + prompt)
+        negative_prompt = "ugly, deformed"
         width, height = input_image.size
 
         result_image = input_image
-        # result_image = self.pipeline(
-        #      prompt=prompt, 
-        #      negative_prompt=negative_prompt, 
-        #      image=input_image, 
-        #      mask_image=mask_image, 
-        #      height=height, 
-        #      width=width, 
-        #      num_inference_steps = 20
-        #     ).images[0]
+        result_image = self.pipeline(
+             prompt=prompt, 
+             negative_prompt=negative_prompt, 
+             image=input_image, 
+             mask_image=mask_image, 
+             height=height, 
+             width=width, 
+             num_inference_steps = 20
+            ).images[0]
 
         print("image generation complete")
         result_image.save("img/uncropped.png")
